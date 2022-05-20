@@ -1,25 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Form from "./components/Form/Form"
+import FormTwo from "./components/FormTwo/FormTwo"
+import FAQ from "./components/FAQ/FAQ"
+import Help from "./components/Help/Help"
+import LandingPage from "./components/LandingPage/LandingPage"
+import { ExpensesProvider } from "./context/ExpensesContext"
+import ResponsiveAppBar from "./layouts/Header"
+import StickyFooter from "./layouts/Footer"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+function App(){
 
-export default App;
+  return(
+  <ExpensesProvider>
+    <ResponsiveAppBar />
+      <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="Form" element={<Form />} />
+            <Route path="faq" element={<FAQ />} />
+            <Route path="help" element={<Help />} />
+          </Routes>
+      </BrowserRouter>
+
+  </ExpensesProvider>
+)};
+
+  export default App

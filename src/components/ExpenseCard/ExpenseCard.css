@@ -1,0 +1,57 @@
+.expenseCard{
+  background: white;
+  padding: 15px;
+  margin-bottom: 50px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  border-radius: 25px;
+}
+
+.img-box{
+  position: relative;
+}
+
+.img{
+  border-radius: 10%;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  position: relative;
+}
+
+.preview{
+  position: absolute;
+  top:0px;
+  background: #1976D2;
+  color:white;
+  padding: 8px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-top-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  box-shadow: 0 2px 8px 0 #F8F9FA;
+}
+
+.date{
+  color: #1976D2;
+}
+
+.chips{
+  display: inline-block;
+  padding:5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-right: 10px;
+  background-color:#1976D2;
+  color:white;
+  border-radius:15px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.description{
+  display: inline-block;
+  background-color: #F8F9FA;
+  padding:6px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius:15px;
+  margin-bottom: 20px;
+
+}
