@@ -62,7 +62,6 @@ const Form = () => {
   const [subtotal, setSubtotal] = useState(0)
   const [progress, setProgress] = useState(33)
   const currentYear = new Date().getFullYear()
-  const uba = "hello"
 
   //Validation
   const [personValidation, setPersonValidation] = useState(false)
