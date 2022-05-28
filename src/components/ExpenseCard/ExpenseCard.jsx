@@ -55,8 +55,6 @@ return (
 
         <Grid item xs={12}>
           <div className="chips">MWST: {mwst}</div>
-          <div className="chips">Number of KM: {numberOfKm}</div>
-          <div className="chips">Car Expense: CHF {numberOfKm*0.75}</div>
         </Grid>
 
       </Grid>

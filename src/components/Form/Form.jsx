@@ -52,7 +52,7 @@ const Form = () => {
   const [firstname, setFirstname] = useState("")
   const [secondname, setSecondname] = useState("")
   const [paymentPeriod, setPaymentPeriod] = useState("")
-  const [date, setDate] = useState(new Date())
+  const [date, setDate] = useState(null)
   const [account, setAccount] = useState("")
   const [amount, setAmount] = useState(0)
   const [description, setDescription] = useState("")
@@ -61,6 +61,22 @@ const Form = () => {
   const [mwst, setMwst] = useState("")
   const [subtotal, setSubtotal] = useState(0)
   const [progress, setProgress] = useState(33)
+  const currentYear = new Date().getFullYear()
+
+  //Validation
+  const [personValidation, setPersonValidation] = useState(false)
+  const [expenseValidation, setExpenseValidation] = useState(false)
+
+  const [firstnameValidator, setFirstnameValidator] = useState(null)
+  const [secondnameValidator, setSecondnameValidator] = useState(null)
+  const [paymentPeriodValidator, setPaymentPeriodValidator] = useState(null)
+
+  const [dateValidator, setDateValidator] = useState(null)
+  const [accountValidator, setAccountValidator] = useState(null)
+  const [amountValidator, setAmountValidator] = useState(null)
+  const [descriptionValidator, setDescriptionValidator] = useState(null)
+  const [imageValidator, setImageValidator] = useState(null)
+  const [mwstValidator, setMwstValidator] = useState("")
 
   //conditional rendering
   const [formStatus, setFormStatus] = useState(true)
@@ -68,17 +84,28 @@ const Form = () => {
   const [type, setType] = useState("receipt")
 
   //actions
-
   const handleClick = () => {
     const expense = { firstname, secondname, paymentPeriod, date, account, amount, mwst, image, description, numberOfKm }
-    addExpense(expense);
-    setPaymentPeriod("")
-    setAccount("")
-    setAmount("")
-    setDescription("")
-    setImage()
-    setNumberOfKm(0)
-    setDate(new Date())
+    if (
+      dateValidator === false &&
+      accountValidator === false &&
+      amountValidator === false &&
+      descriptionValidator === false &&
+      imageValidator === false &&
+      mwstValidator === false
+    ){
+      addExpense(expense);
+      setPaymentPeriod("")
+      setAccount("")
+      setAmount("")
+      setDescription("")
+      setImage("")
+      setNumberOfKm(0)
+      setDate(null)
+      setMwst("")
+
+      setDateValidator()
+    } else{}
 }
 
 useEffect(() => {
@@ -94,7 +121,59 @@ function handleTypeChange(event, newValue) {
   const handleImageUpload = (e) => {
     let selectedFile = e.target.files[0]
     setImage(URL.createObjectURL(selectedFile))
+  };
+
+
+
+//Validation
+
+  //Person Validation
+  function handlePersonValidation(){
+    firstname.length > 2 ? setFirstnameValidator(false) : setFirstnameValidator(true);
+    secondname.length > 2 ? setSecondnameValidator(false) : setSecondnameValidator(true);
+    paymentPeriod !== "" ? setPaymentPeriodValidator(false) : setPaymentPeriodValidator(true);
+
+    console.log(paymentPeriodValidator);
   }
+
+  useEffect(() => {
+    console.log(paymentPeriodValidator);
+    if (
+      firstnameValidator === false &&
+      secondnameValidator === false &&
+      paymentPeriodValidator === false
+    ){
+      setFormStatus(false)
+      setProgress(66)
+    } else{}
+  }, [firstnameValidator, secondnameValidator, paymentPeriodValidator]);
+
+  //Expense Validation
+  function handleExpenseValidation(){
+    date !== "" ? setDateValidator(false) : setDateValidator(true)
+    account !== "" ? setAccountValidator(false) : setAccountValidator(true)
+    amount > 0 ? setAmountValidator(false) : setAmountValidator(true)
+    description.length > 10 ? setDescriptionValidator(false) : setDescriptionValidator(true)
+    image !== "" ? setImageValidator(false) : setImageValidator(true)
+    mwstValidator !== "" ? setMwstValidator(false) : setMwstValidator(true)
+    console.log(mwstValidator);
+  }
+
+  // useEffect(() => {
+  //   console.log(mwstValidator);
+  //   if (
+  //     dateValidator === false &&
+  //     accountValidator === false &&
+  //     amountValidator === false &&
+  //     descriptionValidator === false &&
+  //     imageValidator === false &&
+  //     mwstValidator === false
+  //   ){
+  //     handleClick()
+  //   } else{}
+  // }, [dateValidator, accountValidator, amountValidator, descriptionValidator, imageValidator, mwstValidator]);
+
+
 
 
  //jsPDF
@@ -111,7 +190,7 @@ function createPDF(test){
     return [day, mnth, date.getFullYear()].join(".");
     }
 
-  var name = expenses[0].firstname + " " + expenses[0].secondname + " - " + expenses[0].paymentPeriod + " " + new Date().getFullYear()
+  var name = expenses[0].firstname + " " + expenses[0].secondname + " - " + expenses[0].paymentPeriod
   var col = ["Amount","Date","Account","MWST","Description","Number of Km"];
   var rows = [];
   var imageArray = []
@@ -169,6 +248,8 @@ function createPDF(test){
               InputProps={{
                 startAdornment: <InputAdornment position="start"><PersonIcon/></InputAdornment>,
               }}
+              error={firstnameValidator}
+              helperText={firstnameValidator ? "Please add your firstname" : ""}
             />
           </Grid>
           <Grid item xs={9}>
@@ -179,8 +260,8 @@ function createPDF(test){
               className="InputField"
               value={secondname}
               onChange={(event) => setSecondname(event.target.value)}
-              error={secondname === ""}
-              helperText={secondname === "" ? "Secondname is missing." : ""}
+              error={secondnameValidator}
+              helperText={secondnameValidator ? "Please add your secondname" : ""}
             />
           </Grid>
           <Grid item xs={12}>
@@ -200,19 +281,21 @@ function createPDF(test){
                   className="InputField"
                   value={paymentPeriod}
                   onChange={(event) => setPaymentPeriod(event.target.value)}
+                  error={paymentPeriodValidator}
+                  helpertext={paymentPeriodValidator ? "Choose your payment period" : ""}
                 >
-                  <MenuItem value={"January"}>January {new Date().getFullYear()}</MenuItem>
-                  <MenuItem value={"February"}>February {new Date().getFullYear()}</MenuItem>
-                  <MenuItem value={"March"}>March {new Date().getFullYear()}</MenuItem>
-                  <MenuItem value={"April"}>April {new Date().getFullYear()}</MenuItem>
-                  <MenuItem value={"May"}>May {new Date().getFullYear()}</MenuItem>
-                  <MenuItem value={"June"}>June {new Date().getFullYear()}</MenuItem>
-                  <MenuItem value={"July"}>July {new Date().getFullYear()}</MenuItem>
-                  <MenuItem value={"August"}>August {new Date().getFullYear()}</MenuItem>
-                  <MenuItem value={"September"}>September {new Date().getFullYear()}</MenuItem>
-                  <MenuItem value={"Oktober"}>Oktober {new Date().getFullYear()}</MenuItem>
-                  <MenuItem value={"November"}>November {new Date().getFullYear()}</MenuItem>
-                  <MenuItem value={"December"}>December {new Date().getFullYear()}</MenuItem>
+                  <MenuItem value={"January " + currentYear}>January {currentYear}</MenuItem>
+                  <MenuItem value={"February " + currentYear}>February {currentYear}</MenuItem>
+                  <MenuItem value={"March " + currentYear}>March {currentYear}</MenuItem>
+                  <MenuItem value={"April " + currentYear}>April {currentYear}</MenuItem>
+                  <MenuItem value={"May " + currentYear}>May {currentYear}</MenuItem>
+                  <MenuItem value={"June " + currentYear}>June {currentYear}</MenuItem>
+                  <MenuItem value={"July " + currentYear}>July {currentYear}</MenuItem>
+                  <MenuItem value={"August " + currentYear}>August {currentYear}</MenuItem>
+                  <MenuItem value={"September " + currentYear}>September {currentYear}</MenuItem>
+                  <MenuItem value={"Oktober " + currentYear}>Oktober {currentYear}</MenuItem>
+                  <MenuItem value={"November " + currentYear}>November {currentYear}</MenuItem>
+                  <MenuItem value={"December " + currentYear}>December {currentYear}</MenuItem>
                 </Select>
               </FormControl>
             </Box>
@@ -224,7 +307,7 @@ function createPDF(test){
               <Button
               variant="contained"
               size="large"
-              onClick={() => {setFormStatus(false); setProgress(66);}}
+              onClick={() => {handlePersonValidation();}}
               >Next
               </Button>
             </Stack>
@@ -242,7 +325,7 @@ function createPDF(test){
           <Grid item xs={12} align="center">
             <Tabs value={type} onChange={handleTypeChange}>
               <Tab value={"receipt"} icon={<ReceiptLongIcon />} aria-label="Receipt Expense" />
-              <Tab value={"car"} icon={<DirectionsCarFilledIcon />} aria-label="Car Expense" />
+              <Tab disabled value={"car"} icon={<DirectionsCarFilledIcon />} aria-label="Car Expense" />
             </Tabs>
           </Grid>
 
@@ -260,6 +343,8 @@ function createPDF(test){
                   setDate(newValue);
                 }}
                 renderInput={(params) => <TextField {...params} />}
+                error={dateValidator}
+                helpertext={dateValidator ? "Choose a date" : ""}
               />
             </LocalizationProvider>
           </Grid>
@@ -277,6 +362,8 @@ function createPDF(test){
                 className="InputField"
                 value={account}
                 onChange={(event) => setAccount(event.target.value)}
+                error={accountValidator}
+                helpertext={accountValidator ? "Choose an Account" : ""}
               >
                 <MenuItem value={"5820 Reisespesen"}>5820 Reisespesen</MenuItem>
                 <MenuItem value={"5821 Verpflegungsspesen"}>5821 Verpflegungsspesen</MenuItem>
@@ -303,6 +390,8 @@ function createPDF(test){
           }}
               value={amount}
               onChange={(event) => setAmount(Number(event.target.value))}
+              error={amountValidator}
+              helpertext={amountValidator ? "Fill an amount" : ""}
             />
           </Grid>
 
@@ -317,6 +406,8 @@ function createPDF(test){
                 className="InputField"
                 value={mwst}
                 onChange={(event) => setMwst(event.target.value)}
+                error={mwstValidator}
+                helpertext={mwstValidator ? "MWST is missing" : ""}
               >
                 <MenuItem value={"2.5%"}>2.5%</MenuItem>
                 <MenuItem value={"3.7%"}>3.7%</MenuItem>
@@ -346,6 +437,8 @@ function createPDF(test){
               className="InputField"
               value={description}
               onChange={(event) => setDescription(event.target.value)}
+              error={descriptionValidator}
+              helpertext={descriptionValidator ? "min. 20 signs" : ""}
               />
           </Grid>
           </Grid>
@@ -393,7 +486,7 @@ function createPDF(test){
           </Grid>
 
           <Grid item xs={1}>
-            <Fab color="primary" aria-label="add" onClick={handleClick}>
+            <Fab color="primary" aria-label="add" onClick={() => {handleExpenseValidation(); handleClick();}}>
               <AddIcon />
             </Fab>
           </Grid>
