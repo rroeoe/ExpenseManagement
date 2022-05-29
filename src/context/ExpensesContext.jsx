@@ -35,6 +35,7 @@ export const ExpensesProvider = ({ children }) => {
  const updateTotal = (expenses) => {
      let total = 0;
      state.expenses.forEach((expense) => (total += Number(expense.amount)));
+     state.expenses.forEach((expense) => (total += Number(expense.numberOfKm*0.75)));
 
      dispatch({
        type: "UPDATE_TOTAL",

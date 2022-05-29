@@ -3,6 +3,7 @@ import React, {useContext, useState, useEffect} from 'react';
 //Local Files
 import ExpenseCard from "../ExpenseCard/ExpenseCard"
 import "./Form.css"
+import carImage from "../../assets/car.jpg"
 
 //Context
 import useTool from "../../context/ExpensesContext"
@@ -27,6 +28,11 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import InputAdornment from '@mui/material/InputAdornment';
 import Fab from '@mui/material/Fab';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import OutlinedInput from '@mui/material/OutlinedInput';
 
 //Icons
 import DirectionsCarFilledIcon from '@mui/icons-material/DirectionsCarFilled';
@@ -59,7 +65,6 @@ const Form = () => {
   const [image, setImage] = useState("")
   const [numberOfKm, setNumberOfKm] = useState(0)
   const [mwst, setMwst] = useState("")
-  const [subtotal, setSubtotal] = useState(0)
   const [progress, setProgress] = useState(33)
   const currentYear = new Date().getFullYear()
   const referenceUploadedImage = React.useRef();
@@ -82,41 +87,35 @@ const Form = () => {
   //conditional rendering
   const [formStatus, setFormStatus] = useState(true)
   const [productAdd, setProductAdd] = useState(false)
-  const [type, setType] = useState("receipt")
 
-  //actions
-  const handleClick = () => {
-    const expense = { firstname, secondname, paymentPeriod, date, account, amount, mwst, image, description, numberOfKm }
-
-      addExpense(expense)
-      setPaymentPeriod("")
-      setAccount("")
-      setAmount("")
-      setDescription("")
-      setImage("")
-      setNumberOfKm(0)
-      setDate(null)
-      setMwst("")
-      referenceUploadedImage.current.value = ""
-}
+  //Dialog
+  const [openReceipt, setOpenReceipt] = useState(false)
+  const [openCar, setOpenCar] = useState(false)
 
 //Calculate Total
 useEffect(() => {
   updateTotal(expenses)
 }, [expenses]);
 
-//Receipt vs. Car
-function handleTypeChange(event, newValue) {
-    setType(newValue);
-    setDescription("")
-    setNumberOfKm(0)
-  }
-
 //Upload Image
   const handleImageUpload = (e) => {
     let selectedFile = e.target.files[0]
     setImage(URL.createObjectURL(selectedFile))
   };
+
+//Reset Values
+
+  const resetValues = () => {
+    setPaymentPeriod("")
+    setAccount("")
+    setAmount("")
+    setDescription("")
+    setImage("")
+    setNumberOfKm(0)
+    setDate(null)
+    setMwst("")
+    referenceUploadedImage.current.value = ""
+  }
 
 
 
@@ -147,6 +146,46 @@ function handleTypeChange(event, newValue) {
   function handleExpenseValidation(){
 
   }
+
+  //Dialog
+    //open Dialog
+  const handleClickOpenReceipt = () => {
+    setOpenReceipt(true)
+  }
+
+  const handleClickOpenCar = () => {
+    setOpenCar(true)
+    setImage(process.env.PUBLIC_URL + "carIcon.jpg")
+    setAccount("5820 Reisespesen")
+
+  }
+
+  //Cancel
+  const handleCloseReceipt = () => {
+    setOpenReceipt(false)
+    resetValues()
+  }
+
+  const handleCloseCar = () => {
+    setOpenCar(false)
+    resetValues()
+  }
+
+
+  //Add
+  const handleAddReceipt = (event, reason) => {
+      setOpenReceipt(false);
+      const expense = { firstname, secondname, paymentPeriod, date, account, amount, mwst, image, description, numberOfKm }
+      addExpense(expense)
+      resetValues()
+  };
+
+  const handleAddCar = (event, reason) => {
+      setOpenCar(false);
+      const expense = { firstname, secondname, paymentPeriod, date, account, amount, mwst, image, description, numberOfKm }
+      addExpense(expense)
+      resetValues()
+  };
 
 
 
@@ -200,6 +239,8 @@ function createPDF(test){
 
   return (
   <React.Fragment>
+
+  /// FIRST PAGE
     <Container fixed sx={{ mt: 5 }} className="Grid-style">
       {formStatus ?
         (<div>
@@ -289,6 +330,8 @@ function createPDF(test){
         </Grid>
           </div>)
           :
+
+          /// SECOND PAGE
           (
           <div>
           <Grid container spacing={5}>
@@ -296,16 +339,154 @@ function createPDF(test){
             <LinearProgress variant="determinate"
             value={progress} />
           </Grid>
-          <Grid item xs={12} align="center">
-            <Tabs value={type} onChange={handleTypeChange}>
-              <Tab value={"receipt"} icon={<ReceiptLongIcon />} aria-label="Receipt Expense" />
-              <Tab disabled value={"car"} icon={<DirectionsCarFilledIcon />} aria-label="Car Expense" />
-            </Tabs>
+
+          <Grid item xs={3}>
+            <Button
+            variant="contained"
+            size="large"
+            onClick={handleClickOpenReceipt}
+            ><ReceiptLongIcon /> Add Receipt
+            </Button>
+          </Grid>
+          <Grid item xs={9}>
+            <Button
+            variant="contained"
+            size="large"
+            onClick={handleClickOpenCar}
+            ><DirectionsCarFilledIcon /> Add Car Travel
+            </Button>
           </Grid>
 
-          <Grid item xs={12}>
-          {type ? (<div>
-          <Grid container spacing={5}>
+        <Dialog disableEscapeKeyDown open={openReceipt} onClose={handleCloseReceipt} maxWidth="lg" fullWidth={true}>
+        <DialogTitle>Add your Expense</DialogTitle>
+        <DialogContent>
+          <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
+            <Grid container spacing={4} className="DialogGrid">
+            <Grid item xs={3}>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label="Date"
+                  inputFormat="dd.MM.yyyy"
+                  maxDate= {new Date()}
+                  value={date}
+                  onChange={(newValue) => {
+                    setDate(newValue);
+                  }}
+                  renderInput={(params) => <TextField {...params} />}
+                  error={dateValidator}
+                  helpertext={dateValidator ? "Choose a date" : ""}
+                />
+              </LocalizationProvider>
+            </Grid>
+
+            <Grid item xs={4}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Account</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  label="Account"
+                  name="account"
+                  className="InputField"
+                  value={account}
+                  onChange={(event) => setAccount(event.target.value)}
+                  error={accountValidator}
+                  helpertext={accountValidator ? "Choose an Account" : ""}
+                >
+                  <MenuItem value={"5820 Reisespesen"}>5820 Reisespesen</MenuItem>
+                  <MenuItem value={"5821 Verpflegungsspesen"}>5821 Verpflegungsspesen</MenuItem>
+                  <MenuItem value={"5822 Übernachtungsspesen"}>5822 Übernachtungsspesen</MenuItem>
+                  <MenuItem value={"5880 Personalanlässe"}>5880 Personalanlässe</MenuItem>
+                  <MenuItem value={"Account is unclear"}><em>None of these options</em></MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={3}>
+              <TextField
+                id="outlined-required"
+                label="Amount"
+                type="number"
+                name="amount"
+                className="InputField"
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">CHF</InputAdornment>,
+                }}
+                InputLabelProps={{
+              shrink: true,
+            }}
+                value={amount}
+                onChange={(event) => setAmount(Number(event.target.value))}
+                error={amountValidator}
+                helpertext={amountValidator ? "Fill an amount" : ""}
+              />
+            </Grid>
+
+            <Grid item xs={2}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">MWST</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  label="Account"
+                  name="account"
+                  className="InputField"
+                  value={mwst}
+                  onChange={(event) => setMwst(event.target.value)}
+                  error={mwstValidator}
+                  helpertext={mwstValidator ? "MWST is missing" : ""}
+                >
+                  <MenuItem value={"2.5%"}>2.5%</MenuItem>
+                  <MenuItem value={"3.7%"}>3.7%</MenuItem>
+                  <MenuItem value={"7.7%"}>7.7%</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+
+
+
+
+
+            <Grid item xs={4}>
+                <input
+                  id="file-input"
+                  type="file"
+                  accept="image/*"
+                  ref={referenceUploadedImage}
+                  onChange={handleImageUpload}
+                />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                id="filled-multiline-static"
+                label="Describe your expense"
+                multiline
+                rows={2}
+                variant="filled"
+                fullWidth
+                name="description"
+                className="InputField"
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                error={descriptionValidator}
+                helpertext={descriptionValidator ? "min. 20 signs" : ""}
+                />
+            </Grid>
+            </Grid>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseReceipt}>Cancel</Button>
+          <Button onClick={handleAddReceipt}>Add</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog disableEscapeKeyDown open={openCar} onClose={handleCloseCar} maxWidth="lg" fullWidth={true}>
+      <DialogTitle>Add your Car Travel</DialogTitle>
+      <DialogContent>
+        <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
+          <Grid container spacing={4} className="DialogGrid">
           <Grid item xs={3}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
@@ -323,89 +504,24 @@ function createPDF(test){
             </LocalizationProvider>
           </Grid>
 
-
-
-          <Grid item xs={4}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Account</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="Account"
-                name="account"
-                className="InputField"
-                value={account}
-                onChange={(event) => setAccount(event.target.value)}
-                error={accountValidator}
-                helpertext={accountValidator ? "Choose an Account" : ""}
-              >
-                <MenuItem value={"5820 Reisespesen"}>5820 Reisespesen</MenuItem>
-                <MenuItem value={"5821 Verpflegungsspesen"}>5821 Verpflegungsspesen</MenuItem>
-                <MenuItem value={"5822 Übernachtungsspesen"}>5822 Übernachtungsspesen</MenuItem>
-                <MenuItem value={"5880 Personalanlässe"}>5880 Personalanlässe</MenuItem>
-                <MenuItem value={"Account is unclear"}><em>None of these options</em></MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
           <Grid item xs={3}>
             <TextField
-              required
               id="outlined-required"
-              label="Amount"
+              label="Number of Kilometres"
               type="number"
               name="amount"
               className="InputField"
-              InputProps={{
-                startAdornment: <InputAdornment position="start">CHF</InputAdornment>,
-              }}
-              InputLabelProps={{
-            shrink: true,
-          }}
-              value={amount}
-              onChange={(event) => setAmount(Number(event.target.value))}
-              error={amountValidator}
-              helpertext={amountValidator ? "Fill an amount" : ""}
+              value={numberOfKm}
+              onChange={(event) => setNumberOfKm(Number(event.target.value))}
             />
           </Grid>
 
-          <Grid item xs={2}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">MWST</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="Account"
-                name="account"
-                className="InputField"
-                value={mwst}
-                onChange={(event) => setMwst(event.target.value)}
-                error={mwstValidator}
-                helpertext={mwstValidator ? "MWST is missing" : ""}
-              >
-                <MenuItem value={"2.5%"}>2.5%</MenuItem>
-                <MenuItem value={"3.7%"}>3.7%</MenuItem>
-                <MenuItem value={"7.7%"}>7.7%</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={4}>
-              <input
-                id="file-input"
-                type="file"
-                accept="image/*"
-                ref={referenceUploadedImage}
-                onChange={handleImageUpload}
-              />
-          </Grid>
-
-          <Grid item xs={8}>
+          <Grid item xs={12}>
             <TextField
               id="filled-multiline-static"
-              label="Describe your expense"
+              label="Describe your travel (from & to)"
               multiline
-              rows={4}
+              rows={2}
               variant="filled"
               fullWidth
               name="description"
@@ -417,56 +533,20 @@ function createPDF(test){
               />
           </Grid>
           </Grid>
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseCar}>Cancel</Button>
+        <Button onClick={handleAddCar}>Add</Button>
+      </DialogActions>
+    </Dialog>
+</Grid>
 
 
-          </div>) : (<div>
-          <Grid container spacing={5}>
-          <Grid item xs={12}>
-              <TextField
-              required
-              id="outlined-required"
-              label="Distance"
-              type="number"
-              name="numberOfKm"
-              className="InputField"
-              value={numberOfKm}
-              onChange={(event) => setNumberOfKm(Number(event.target.value))}
-              InputProps={{
-                endAdornment: <InputAdornment position="start">Km</InputAdornment>,
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              id="filled-multiline-static"
-              label="Describe your travel (start and end)"
-              multiline
-              rows={4}
-              variant="filled"
-              fullWidth
-              name="description"
-              className="InputField"
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              />
-          </Grid>
-          </Grid>
-          </div>)} </Grid>
 
-          <Grid container spacing={5} className="spacing">
-          <Grid item xs={7}>
-          </Grid>
-          <Grid item xs={4}>
-            <h4>Subtotal: CHF {amount + numberOfKm*0.75}</h4>
-          </Grid>
 
-          <Grid item xs={1}>
-            <Fab color="primary" aria-label="add" onClick={() => {handleClick();}}>
-              <AddIcon />
-            </Fab>
-          </Grid>
-        </Grid>
-        </Grid>
+
+
 
           </div>)}
           </Container>

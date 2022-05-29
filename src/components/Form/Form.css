@@ -1,5 +1,6 @@
 .InputField{
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
 }
 
 .Button{
@@ -22,4 +23,8 @@
 .spacing{
   margin: 80px;
   padding-top: 80px;
+}
+
+.DialogGrid{
+  padding: 10px;
 }
