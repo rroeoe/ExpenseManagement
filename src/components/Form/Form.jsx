@@ -62,6 +62,7 @@ const Form = () => {
   const [subtotal, setSubtotal] = useState(0)
   const [progress, setProgress] = useState(33)
   const currentYear = new Date().getFullYear()
+  const referenceUploadedImage = React.useRef();
 
   //Validation
   const [personValidation, setPersonValidation] = useState(false)
@@ -86,15 +87,8 @@ const Form = () => {
   //actions
   const handleClick = () => {
     const expense = { firstname, secondname, paymentPeriod, date, account, amount, mwst, image, description, numberOfKm }
-    if (
-      dateValidator === false &&
-      accountValidator === false &&
-      amountValidator === false &&
-      descriptionValidator === false &&
-      imageValidator === false &&
-      mwstValidator === false
-    ){
-      addExpense(expense);
+
+      addExpense(expense)
       setPaymentPeriod("")
       setAccount("")
       setAmount("")
@@ -103,21 +97,22 @@ const Form = () => {
       setNumberOfKm(0)
       setDate(null)
       setMwst("")
-
-      setDateValidator()
-    } else{}
+      referenceUploadedImage.current.value = ""
 }
 
+//Calculate Total
 useEffect(() => {
   updateTotal(expenses)
 }, [expenses]);
 
+//Receipt vs. Car
 function handleTypeChange(event, newValue) {
     setType(newValue);
     setDescription("")
     setNumberOfKm(0)
   }
 
+//Upload Image
   const handleImageUpload = (e) => {
     let selectedFile = e.target.files[0]
     setImage(URL.createObjectURL(selectedFile))
@@ -150,29 +145,8 @@ function handleTypeChange(event, newValue) {
 
   //Expense Validation
   function handleExpenseValidation(){
-    date !== "" ? setDateValidator(false) : setDateValidator(true)
-    account !== "" ? setAccountValidator(false) : setAccountValidator(true)
-    amount > 0 ? setAmountValidator(false) : setAmountValidator(true)
-    description.length > 10 ? setDescriptionValidator(false) : setDescriptionValidator(true)
-    image !== "" ? setImageValidator(false) : setImageValidator(true)
-    mwstValidator !== "" ? setMwstValidator(false) : setMwstValidator(true)
-    console.log(mwstValidator);
+
   }
-
-  // useEffect(() => {
-  //   console.log(mwstValidator);
-  //   if (
-  //     dateValidator === false &&
-  //     accountValidator === false &&
-  //     amountValidator === false &&
-  //     descriptionValidator === false &&
-  //     imageValidator === false &&
-  //     mwstValidator === false
-  //   ){
-  //     handleClick()
-  //   } else{}
-  // }, [dateValidator, accountValidator, amountValidator, descriptionValidator, imageValidator, mwstValidator]);
-
 
 
 
@@ -369,7 +343,7 @@ function createPDF(test){
                 <MenuItem value={"5821 Verpflegungsspesen"}>5821 Verpflegungsspesen</MenuItem>
                 <MenuItem value={"5822 Übernachtungsspesen"}>5822 Übernachtungsspesen</MenuItem>
                 <MenuItem value={"5880 Personalanlässe"}>5880 Personalanlässe</MenuItem>
-                <MenuItem value={"Account is unclear"}>none of these options</MenuItem>
+                <MenuItem value={"Account is unclear"}><em>None of these options</em></MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -421,6 +395,7 @@ function createPDF(test){
                 id="file-input"
                 type="file"
                 accept="image/*"
+                ref={referenceUploadedImage}
                 onChange={handleImageUpload}
               />
           </Grid>
@@ -486,7 +461,7 @@ function createPDF(test){
           </Grid>
 
           <Grid item xs={1}>
-            <Fab color="primary" aria-label="add" onClick={() => {handleExpenseValidation(); handleClick();}}>
+            <Fab color="primary" aria-label="add" onClick={() => {handleClick();}}>
               <AddIcon />
             </Fab>
           </Grid>
