@@ -42,7 +42,7 @@ return (
         </Grid>
 
         <Grid item xs={3}>
-          <h3>CHF {Number(amount) + Number(numberOfKm*0.75)}</h3>
+          <h3>CHF {Number(amount)}</h3>
         </Grid>
 
         <Grid item xs={9}>

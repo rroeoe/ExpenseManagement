@@ -68,6 +68,7 @@ const Form = () => {
   const [progress, setProgress] = useState(33)
   const currentYear = new Date().getFullYear()
   const referenceUploadedImage = React.useRef();
+  const mileageCompensation = 0.75
 
   //Validation
   const [personValidation, setPersonValidation] = useState(false)
@@ -87,6 +88,7 @@ const Form = () => {
   //conditional rendering
   const [formStatus, setFormStatus] = useState(true)
   const [productAdd, setProductAdd] = useState(false)
+  const [createPdfButton, setCreatePdfButton] = useState(false)
 
   //Dialog
   const [openReceipt, setOpenReceipt] = useState(false)
@@ -95,6 +97,7 @@ const Form = () => {
 //Calculate Total
 useEffect(() => {
   updateTotal(expenses)
+  checkPdfButton()
 }, [expenses]);
 
 //Upload Image
@@ -116,6 +119,16 @@ useEffect(() => {
     setMwst("")
     referenceUploadedImage.current.value = ""
   }
+
+//CheckPdfButton
+
+const checkPdfButton = () => {
+  if (expenses.length >= 1){
+    setCreatePdfButton(true)
+  } else{
+    setCreatePdfButton(false)
+  }
+}
 
 
 
@@ -157,7 +170,7 @@ useEffect(() => {
     setOpenCar(true)
     setImage(process.env.PUBLIC_URL + "carIcon.jpg")
     setAccount("5820 Reisespesen")
-
+    setMwst("N/A")
   }
 
   //Cancel
@@ -213,7 +226,7 @@ function createPDF(test){
   expenses.forEach(expense => {
         var temp = ["CHF " + expense.amount,convertDate(expense.date),expense.account,expense.mwst,expense.description,expense.numberOfKm];
         rows.push(temp);
-        total += expense.amount + (expense.numberOfKm * 0.75)
+        total += expense.amount + (expense.numberOfKm * mileageCompensation)
     });
   doc.setFontSize(18)
   doc.text(name, 15, 10)
@@ -240,7 +253,6 @@ function createPDF(test){
   return (
   <React.Fragment>
 
-  /// FIRST PAGE
     <Container fixed sx={{ mt: 5 }} className="Grid-style">
       {formStatus ?
         (<div>
@@ -248,9 +260,6 @@ function createPDF(test){
           <Grid item xs={12}>
             <LinearProgress variant="determinate"
             value={progress} />
-          </Grid>
-          <Grid item xs={12}>
-            <h2>🧍 Personal Details</h2>
           </Grid>
           <Grid item xs={3}>
             <TextField
@@ -277,12 +286,6 @@ function createPDF(test){
               onChange={(event) => setSecondname(event.target.value)}
               error={secondnameValidator}
               helperText={secondnameValidator ? "Please add your secondname" : ""}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <h2>📅 Payout Period</h2>
-            <HelpIcon
-            color="primary"
             />
           </Grid>
           <Grid item xs={12}>
@@ -330,8 +333,6 @@ function createPDF(test){
         </Grid>
           </div>)
           :
-
-          /// SECOND PAGE
           (
           <div>
           <Grid container spacing={5}>
@@ -340,7 +341,7 @@ function createPDF(test){
             value={progress} />
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid item xs={4}>
             <Button
             variant="contained"
             size="large"
@@ -348,7 +349,7 @@ function createPDF(test){
             ><ReceiptLongIcon /> Add Receipt
             </Button>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={4}>
             <Button
             variant="contained"
             size="large"
@@ -356,6 +357,27 @@ function createPDF(test){
             ><DirectionsCarFilledIcon /> Add Car Travel
             </Button>
           </Grid>
+            <Grid item xs={4} className="expense">
+              <h3>Expense Total: CHF {total}</h3>
+            </Grid>
+
+
+            {createPdfButton ? (<div>
+            <Grid item xs={12}>
+             <Button
+             variant="outlined"
+             size="large"
+             onClick={() =>{createPDF(); setProgress(100);}}
+             endIcon={<SendIcon />}
+             >
+               Create PDF
+             </Button>
+           </Grid>
+           </div>) : (<div></div>)}
+
+
+
+
 
         <Dialog disableEscapeKeyDown open={openReceipt} onClose={handleCloseReceipt} maxWidth="lg" fullWidth={true}>
         <DialogTitle>Add your Expense</DialogTitle>
@@ -512,7 +534,7 @@ function createPDF(test){
               name="amount"
               className="InputField"
               value={numberOfKm}
-              onChange={(event) => setNumberOfKm(Number(event.target.value))}
+              onChange={(event) => {setNumberOfKm(Number(event.target.value)); setAmount(Number(event.target.value)*mileageCompensation)}}
             />
           </Grid>
 
@@ -542,33 +564,6 @@ function createPDF(test){
     </Dialog>
 </Grid>
 
-
-
-
-
-
-
-          </div>)}
-          </Container>
-
-          <Container fixed sx={{ mt: 5 }}>
-          {formStatus ?
-            (<div></div>) : (<div>
-               <Grid container spacing={4}>
-                 <Grid item xs={10} className="expense">
-                   <h2>Expense Total: CHF {total}</h2>
-                 </Grid>
-                 <Grid item xs={2}>
-                  <Button
-                  variant="outlined"
-                  size="large"
-                  onClick={() =>{createPDF(); setProgress(100);}}
-                  endIcon={<SendIcon />}
-                  >
-                    Create PDF
-                  </Button>
-                </Grid>
-               </Grid>
 
                  {expenses.map((data, index) =>
                    <Grid item xs={12}>
