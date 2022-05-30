@@ -33,6 +33,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import FormHelperText from '@mui/material/FormHelperText';
 
 //Icons
 import DirectionsCarFilledIcon from '@mui/icons-material/DirectionsCarFilled';
@@ -71,19 +72,21 @@ const Form = () => {
   const mileageCompensation = 0.75
 
   //Validation
-  const [personValidation, setPersonValidation] = useState(false)
-  const [expenseValidation, setExpenseValidation] = useState(false)
+  const [personalDetailsError, setPersonalDetailsError] = useState(false)
+  const [receiptError, setReceiptError] = useState(false)
+  const [carError, setCarError] = useState(false)
 
-  const [firstnameValidator, setFirstnameValidator] = useState(null)
-  const [secondnameValidator, setSecondnameValidator] = useState(null)
-  const [paymentPeriodValidator, setPaymentPeriodValidator] = useState(null)
+  const [firstnameError, setFirstnameError] = useState(null)
+  const [secondnameError, setSecondnameError] = useState(null)
+  const [paymentPeriodError, setPaymentPeriodError] = useState(null)
 
-  const [dateValidator, setDateValidator] = useState(null)
-  const [accountValidator, setAccountValidator] = useState(null)
-  const [amountValidator, setAmountValidator] = useState(null)
-  const [descriptionValidator, setDescriptionValidator] = useState(null)
-  const [imageValidator, setImageValidator] = useState(null)
-  const [mwstValidator, setMwstValidator] = useState("")
+  const [dateError, setDateError] = useState(null)
+  const [accountError, setAccountError] = useState(null)
+  const [amountError, setAmountError] = useState(null)
+  const [descriptionError, setDescriptionError] = useState(null)
+  const [imageError, setImageError] = useState(null)
+  const [mwstError, setMwstError] = useState(null)
+  const [numberOfKmError, setNumberOfKmError] = useState(null)
 
   //conditional rendering
   const [formStatus, setFormStatus] = useState(true)
@@ -115,18 +118,23 @@ useEffect(() => {
     setDescription("")
     setImage("")
     setNumberOfKm(0)
-    setDate(null)
+    setDate("")
     setMwst("")
     referenceUploadedImage.current.value = ""
   }
 
-//CheckPdfButton
+  const resetValidation = () => {
+    setAccountError(null)
+  }
+
+//CheckPdfButton & Progressbar
 
 const checkPdfButton = () => {
   if (expenses.length >= 1){
     setCreatePdfButton(true)
   } else{
     setCreatePdfButton(false)
+    setProgress(66)
   }
 }
 
@@ -135,29 +143,37 @@ const checkPdfButton = () => {
 //Validation
 
   //Person Validation
-  function handlePersonValidation(){
-    firstname.length > 2 ? setFirstnameValidator(false) : setFirstnameValidator(true);
-    secondname.length > 2 ? setSecondnameValidator(false) : setSecondnameValidator(true);
-    paymentPeriod !== "" ? setPaymentPeriodValidator(false) : setPaymentPeriodValidator(true);
-
-    console.log(paymentPeriodValidator);
+  function handlePersonalDetailsError(){
+    firstname.length < 2 ? setFirstnameError(true) : setFirstnameError(false);
+    secondname.length < 2 ? setSecondnameError(true) : setSecondnameError(false);
+    paymentPeriod === "" ? setPaymentPeriodError(true) : setPaymentPeriodError(false);
   }
 
   useEffect(() => {
-    console.log(paymentPeriodValidator);
     if (
-      firstnameValidator === false &&
-      secondnameValidator === false &&
-      paymentPeriodValidator === false
+      firstnameError === false &&
+      secondnameError === false &&
+      paymentPeriodError === false
     ){
       setFormStatus(false)
       setProgress(66)
     } else{}
-  }, [firstnameValidator, secondnameValidator, paymentPeriodValidator]);
+  }, [firstnameError, secondnameError, paymentPeriodError]);
 
-  //Expense Validation
-  function handleExpenseValidation(){
+  //Receipt Validation
+  function handleReceiptValidation(){
+    date === null ? setDateError(true) : setDateError(false)
+    account === "" ? setAccountError(true) : setAccountError(false)
+    amount == 0 ? setAmountError(true) : setAmountError(false)
+    mwst === "" ? setMwstError(true) : setMwstError(false)
+    image === "" ? setImageError(true) : setImageError(false)
+    description.length < 20 ? setDescriptionError(true) : setDescriptionError(false)
+  }
 
+  function handleCarValidation(){
+    date === "" ? setDateError(true) : setDateError(false)
+    numberOfKm == 0 ? setNumberOfKmError(true) : setNumberOfKmError(false)
+    description.length < 20 ? setDescriptionError(true) : setDescriptionError(false)
   }
 
   //Dialog
@@ -186,12 +202,32 @@ const checkPdfButton = () => {
 
 
   //Add
+    //note sure if this is necessary
   const handleAddReceipt = (event, reason) => {
+
+  };
+
+  useEffect(() => {
+    if (
+      dateError === false &&
+      accountError === false &&
+      amountError === false &&
+      mwstError === false &&
+      imageError === false &&
+      descriptionError === false
+    ){
       setOpenReceipt(false);
       const expense = { firstname, secondname, paymentPeriod, date, account, amount, mwst, image, description, numberOfKm }
       addExpense(expense)
       resetValues()
-  };
+      resetValidation()
+    } else{}
+  }, [dateError, accountError, amountError, mwstError, imageError, descriptionError]);
+
+
+
+
+
 
   const handleAddCar = (event, reason) => {
       setOpenCar(false);
@@ -253,7 +289,7 @@ function createPDF(test){
   return (
   <React.Fragment>
 
-    <Container fixed sx={{ mt: 5 }} className="Grid-style">
+    <Container fixed sx={{ mt: 5 }}>
       {formStatus ?
         (<div>
         <Grid container spacing={5}>
@@ -269,11 +305,7 @@ function createPDF(test){
               className="InputField"
               value={firstname}
               onChange={(event) => setFirstname(event.target.value)}
-              InputProps={{
-                startAdornment: <InputAdornment position="start"><PersonIcon/></InputAdornment>,
-              }}
-              error={firstnameValidator}
-              helperText={firstnameValidator ? "Please add your firstname" : ""}
+              error={firstnameError}
             />
           </Grid>
           <Grid item xs={9}>
@@ -284,8 +316,7 @@ function createPDF(test){
               className="InputField"
               value={secondname}
               onChange={(event) => setSecondname(event.target.value)}
-              error={secondnameValidator}
-              helperText={secondnameValidator ? "Please add your secondname" : ""}
+              error={secondnameError}
             />
           </Grid>
           <Grid item xs={12}>
@@ -293,14 +324,15 @@ function createPDF(test){
               <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Month</InputLabel>
                 <Select
+                  required
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   label="Month"
                   className="InputField"
                   value={paymentPeriod}
                   onChange={(event) => setPaymentPeriod(event.target.value)}
-                  error={paymentPeriodValidator}
-                  helpertext={paymentPeriodValidator ? "Choose your payment period" : ""}
+                  error={paymentPeriodError}
+                  helpertext={paymentPeriodError ? "Choose your payment period" : ""}
                 >
                   <MenuItem value={"January " + currentYear}>January {currentYear}</MenuItem>
                   <MenuItem value={"February " + currentYear}>February {currentYear}</MenuItem>
@@ -315,6 +347,7 @@ function createPDF(test){
                   <MenuItem value={"November " + currentYear}>November {currentYear}</MenuItem>
                   <MenuItem value={"December " + currentYear}>December {currentYear}</MenuItem>
                 </Select>
+                <FormHelperText>Error</FormHelperText>
               </FormControl>
             </Box>
           </Grid>
@@ -325,7 +358,7 @@ function createPDF(test){
               <Button
               variant="contained"
               size="large"
-              onClick={() => {handlePersonValidation();}}
+              onClick={() => {handlePersonalDetailsError();}}
               >Next
               </Button>
             </Stack>
@@ -341,31 +374,30 @@ function createPDF(test){
             value={progress} />
           </Grid>
 
-          <Grid item xs={4}>
-            <Button
-            variant="contained"
-            size="large"
-            onClick={handleClickOpenReceipt}
-            ><ReceiptLongIcon /> Add Receipt
-            </Button>
+          <Grid item xs={12}>
+          <div className="ChipsRow">
+            <div className="Chips" onClick={handleClickOpenReceipt}>
+              <h3>Receipt</h3>
+              <ReceiptLongIcon sx={{ fontSize: "80px" }} />
+            </div>
+            <div className="Chips" onClick={handleClickOpenCar}>
+              <h3>Car Travel</h3>
+              <DirectionsCarFilledIcon sx={{ fontSize: "80px" }} />
+            </div>
+          </div>
           </Grid>
-          <Grid item xs={4}>
-            <Button
-            variant="contained"
-            size="large"
-            onClick={handleClickOpenCar}
-            ><DirectionsCarFilledIcon /> Add Car Travel
-            </Button>
-          </Grid>
-            <Grid item xs={4} className="expense">
-              <h3>Expense Total: CHF {total}</h3>
+
+
+            <Grid item xs={9.5} className="expense">
+              <h3 className={"totalValue"}>Expense Total: CHF {total}</h3>
             </Grid>
 
 
-            {createPdfButton ? (<div>
-            <Grid item xs={12}>
+            {createPdfButton ? (
+
+            <Grid item xs={2.5}>
              <Button
-             variant="outlined"
+             variant="contained"
              size="large"
              onClick={() =>{createPDF(); setProgress(100);}}
              endIcon={<SendIcon />}
@@ -373,14 +405,17 @@ function createPDF(test){
                Create PDF
              </Button>
            </Grid>
-           </div>) : (<div></div>)}
+
+
+           ) : (<div></div>)}
+
 
 
 
 
 
         <Dialog disableEscapeKeyDown open={openReceipt} onClose={handleCloseReceipt} maxWidth="lg" fullWidth={true}>
-        <DialogTitle>Add your Expense</DialogTitle>
+        <DialogTitle>Add your receipt expense</DialogTitle>
         <DialogContent>
           <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
             <Grid container spacing={4} className="DialogGrid">
@@ -388,32 +423,31 @@ function createPDF(test){
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   label="Date"
-                  inputFormat="dd.MM.yyyy"
+                  inputFormat="dd/MM/yyyy"
                   maxDate= {new Date()}
+                  defaultDate={""}
                   value={date}
                   onChange={(newValue) => {
                     setDate(newValue);
                   }}
                   renderInput={(params) => <TextField {...params} />}
-                  error={dateValidator}
-                  helpertext={dateValidator ? "Choose a date" : ""}
+                  error={dateError}
                 />
               </LocalizationProvider>
             </Grid>
 
             <Grid item xs={4}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Account</InputLabel>
+              <FormControl fullWidth error={accountError}>
+                <InputLabel id="demo-simple-select-error-label">Account</InputLabel>
                 <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
+                  labelId="demo-simple-select-error-label"
+                  id="demo-simple-select-error"
                   label="Account"
                   name="account"
                   className="InputField"
                   value={account}
                   onChange={(event) => setAccount(event.target.value)}
-                  error={accountValidator}
-                  helpertext={accountValidator ? "Choose an Account" : ""}
+                  error={accountError}
                 >
                   <MenuItem value={"5820 Reisespesen"}>5820 Reisespesen</MenuItem>
                   <MenuItem value={"5821 Verpflegungsspesen"}>5821 Verpflegungsspesen</MenuItem>
@@ -439,13 +473,12 @@ function createPDF(test){
             }}
                 value={amount}
                 onChange={(event) => setAmount(Number(event.target.value))}
-                error={amountValidator}
-                helpertext={amountValidator ? "Fill an amount" : ""}
+                error={amountError}
               />
             </Grid>
 
             <Grid item xs={2}>
-              <FormControl fullWidth>
+              <FormControl fullWidth error={mwstError}>
                 <InputLabel id="demo-simple-select-label">MWST</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
@@ -455,8 +488,6 @@ function createPDF(test){
                   className="InputField"
                   value={mwst}
                   onChange={(event) => setMwst(event.target.value)}
-                  error={mwstValidator}
-                  helpertext={mwstValidator ? "MWST is missing" : ""}
                 >
                   <MenuItem value={"2.5%"}>2.5%</MenuItem>
                   <MenuItem value={"3.7%"}>3.7%</MenuItem>
@@ -476,6 +507,8 @@ function createPDF(test){
                   accept="image/*"
                   ref={referenceUploadedImage}
                   onChange={handleImageUpload}
+                  color="red"
+                  className={imageError ? "FileAlert" : ""}
                 />
             </Grid>
 
@@ -491,8 +524,8 @@ function createPDF(test){
                 className="InputField"
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
-                error={descriptionValidator}
-                helpertext={descriptionValidator ? "min. 20 signs" : ""}
+                error={descriptionError}
+                helperText={descriptionError ? "min. 20 signs" : ""}
                 />
             </Grid>
             </Grid>
@@ -500,7 +533,7 @@ function createPDF(test){
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseReceipt}>Cancel</Button>
-          <Button onClick={handleAddReceipt}>Add</Button>
+          <Button onClick={() => {handleAddReceipt(); handleReceiptValidation();}}>Add</Button>
         </DialogActions>
       </Dialog>
 
@@ -520,8 +553,7 @@ function createPDF(test){
                   setDate(newValue);
                 }}
                 renderInput={(params) => <TextField {...params} />}
-                error={dateValidator}
-                helpertext={dateValidator ? "Choose a date" : ""}
+                error={dateError}
               />
             </LocalizationProvider>
           </Grid>
@@ -535,6 +567,7 @@ function createPDF(test){
               className="InputField"
               value={numberOfKm}
               onChange={(event) => {setNumberOfKm(Number(event.target.value)); setAmount(Number(event.target.value)*mileageCompensation)}}
+              error={numberOfKmError}
             />
           </Grid>
 
@@ -550,8 +583,8 @@ function createPDF(test){
               className="InputField"
               value={description}
               onChange={(event) => setDescription(event.target.value)}
-              error={descriptionValidator}
-              helpertext={descriptionValidator ? "min. 20 signs" : ""}
+              error={descriptionError}
+              helperText={descriptionError ? "min. 20 signs" : ""}
               />
           </Grid>
           </Grid>

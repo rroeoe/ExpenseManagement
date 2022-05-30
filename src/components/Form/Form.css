@@ -13,3 +13,33 @@
 .DialogGrid{
   padding: 10px;
 }
+
+.ChipsRow{
+  text-align: center;
+}
+
+.Chips{
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  border-radius: 25px;
+  width: 200px;
+  height: 200px;
+  text-align: center;
+  padding: 30px;
+  display: inline-block;
+  margin: 20px;
+  background-color: #F8F9FA;
+  color: #6F7680;
+  cursor: pointer;
+}
+
+.totalValue{
+  display: inline-block;
+  background-color: #F8F9FA;
+  padding:15px;
+  border-radius:15px;
+  margin-bottom: 20px;
+}
+
+.FileAlert{
+  color: red;
+}
