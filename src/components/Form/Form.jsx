@@ -67,6 +67,8 @@ const Form = () => {
   const [numberOfKm, setNumberOfKm] = useState(0)
   const [mwst, setMwst] = useState("")
   const [progress, setProgress] = useState(33)
+  const [receiptSwitch, setReceiptSwitch] = useState(false)
+  const [carSwitch, setCarSwitch] = useState(false)
   const currentYear = new Date().getFullYear()
   const referenceUploadedImage = React.useRef();
   const mileageCompensation = 0.75
@@ -120,7 +122,6 @@ useEffect(() => {
     setNumberOfKm(0)
     setDate("")
     setMwst("")
-    referenceUploadedImage.current.value = ""
   }
 
   const resetValidation = () => {
@@ -222,7 +223,33 @@ const checkPdfButton = () => {
       resetValues()
       resetValidation()
     } else{}
-  }, [dateError, accountError, amountError, mwstError, imageError, descriptionError]);
+  }, [receiptSwitch]);
+
+
+  useEffect(() => {
+    if (
+      dateError === false &&
+      numberOfKmError === false &&
+      descriptionError === false
+    ){
+      setOpenCar(false);
+      const expense = { firstname, secondname, paymentPeriod, date, account, amount, mwst, image, description, numberOfKm }
+      addExpense(expense)
+      resetValues()
+      resetValidation()
+    } else{
+      console.log(dateError);
+      console.log(numberOfKmError);
+      console.log(descriptionError);
+      console.log(date);
+      console.log(account);
+      console.log(amount);
+      console.log(mwst);
+      console.log(image);
+      console.log(description);
+      console.log(numberOfKm);
+    }
+  }, [carSwitch]);
 
 
 
@@ -230,10 +257,7 @@ const checkPdfButton = () => {
 
 
   const handleAddCar = (event, reason) => {
-      setOpenCar(false);
-      const expense = { firstname, secondname, paymentPeriod, date, account, amount, mwst, image, description, numberOfKm }
-      addExpense(expense)
-      resetValues()
+
   };
 
 
@@ -332,7 +356,6 @@ function createPDF(test){
                   value={paymentPeriod}
                   onChange={(event) => setPaymentPeriod(event.target.value)}
                   error={paymentPeriodError}
-                  helpertext={paymentPeriodError ? "Choose your payment period" : ""}
                 >
                   <MenuItem value={"January " + currentYear}>January {currentYear}</MenuItem>
                   <MenuItem value={"February " + currentYear}>February {currentYear}</MenuItem>
@@ -347,7 +370,6 @@ function createPDF(test){
                   <MenuItem value={"November " + currentYear}>November {currentYear}</MenuItem>
                   <MenuItem value={"December " + currentYear}>December {currentYear}</MenuItem>
                 </Select>
-                <FormHelperText>Error</FormHelperText>
               </FormControl>
             </Box>
           </Grid>
@@ -496,10 +518,6 @@ function createPDF(test){
               </FormControl>
             </Grid>
 
-
-
-
-
             <Grid item xs={4}>
                 <input
                   id="file-input"
@@ -533,7 +551,7 @@ function createPDF(test){
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseReceipt}>Cancel</Button>
-          <Button onClick={() => {handleAddReceipt(); handleReceiptValidation();}}>Add</Button>
+          <Button onClick={() => {handleAddReceipt(); handleReceiptValidation(); setReceiptSwitch(current => !current)}}>Add</Button>
         </DialogActions>
       </Dialog>
 
@@ -592,7 +610,7 @@ function createPDF(test){
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCloseCar}>Cancel</Button>
-        <Button onClick={handleAddCar}>Add</Button>
+        <Button onClick={() => {handleCarValidation(); setCarSwitch(current => !current);}}>Add</Button>
       </DialogActions>
     </Dialog>
 </Grid>

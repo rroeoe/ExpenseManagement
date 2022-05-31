@@ -54,7 +54,7 @@ return (
         </Grid>
 
         <Grid item xs={12}>
-          <div className="chips">MWST: {mwst}</div>
+          {mwst == "N/A" ? (<div></div>) : (<div className="chips">MWST: {mwst}</div>)}
         </Grid>
 
       </Grid>
