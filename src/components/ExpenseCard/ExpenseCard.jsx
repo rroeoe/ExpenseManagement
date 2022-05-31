@@ -50,11 +50,11 @@ return (
         </Grid>
 
         <Grid item xs={12}>
-          <div className="description">{description}</div>
+          <div className="description" style={{ wordBreak: "break-word" }}>{description}</div>
         </Grid>
 
         <Grid item xs={12}>
-          {mwst == "N/A" ? (<div></div>) : (<div className="chips">MWST: {mwst}</div>)}
+          {mwst == "0%" ? (<div></div>) : (<div className="chips">MWST: {mwst}</div>)}
         </Grid>
 
       </Grid>

@@ -110,7 +110,6 @@ useEffect(() => {
 
 //Reset Values
   const resetValues = () => {
-    setPaymentPeriod("")
     setAccount("")
     setAmount(0)
     setDescription("")
@@ -168,13 +167,13 @@ const checkPdfButton = () => {
     amount == 0 || amount > 3000 ? setAmountError(true) : setAmountError(false)
     mwst === "" ? setMwstError(true) : setMwstError(false)
     image === "" ? setImageError(true) : setImageError(false)
-    description.length < 10 || description.length > 500 ? setDescriptionError(true) : setDescriptionError(false)
+    description.length < 10 || description.length > 300 ? setDescriptionError(true) : setDescriptionError(false)
   }
 
   function handleCarValidation(){
     date === "test" ? setDateError(true) : setDateError(false)
     numberOfKm == 0 ? setNumberOfKmError(true) : setNumberOfKmError(false)
-    description.length < 10 ? setDescriptionError(true) : setDescriptionError(false)
+    description.length < 10 || description.length > 300 ? setDescriptionError(true) : setDescriptionError(false)
   }
 
   //Dialog
@@ -189,7 +188,7 @@ const checkPdfButton = () => {
     setOpenCar(true)
     setImage(process.env.PUBLIC_URL + "carIcon.jpg")
     setAccount("5820 Reisespesen")
-    setMwst("N/A")
+    setMwst("0%")
   }
 
   //Cancel
@@ -253,30 +252,48 @@ function createPDF(test){
     return [day, mnth, date.getFullYear()].join(".");
     }
 
-  var name = expenses[0].firstname + " " + expenses[0].secondname + " - " + expenses[0].paymentPeriod
-  var col = ["Amount","Date","Account","MWST","Description","Number of Km"];
+
+  var col = ["Date","Account", "Description","MWST","Number of Km", "Amount"];
   var rows = [];
   var imageArray = []
   var total = 0
 
-
   expenses.forEach(expense => {
-        var temp = ["CHF " + expense.amount,convertDate(expense.date),expense.account,expense.mwst,expense.description,expense.numberOfKm];
+        var temp = [convertDate(expense.date),expense.account,expense.description,expense.mwst,expense.numberOfKm, "CHF " + expense.amount];
         rows.push(temp);
         total += expense.amount + (expense.numberOfKm * mileageCompensation)
     });
-  doc.setFontSize(13)
-  doc.text(name, 15, 10)
-  doc.text("Total: CHF " + total.toString(), 15, 20)
-  doc.autoTable(col, rows, { startY: 30 });
+  doc.setFontSize(16)
+  doc.setFont("helvetica", "bold");
+  doc.text(expenses[0].firstname + " " + expenses[0].secondname + "  -  " + expenses[0].paymentPeriod, 15, 45)
+  doc.text("Total: CHF " + total.toString(), 243, 45)
+  doc.addImage(process.env.PUBLIC_URL + "TIE-logo.png", 'PNG', 15, 10, 24, 21, [i])
+  doc.autoTable(col, rows, { startY: 55 });
 
 
   for (var i = 0; i < expenses.length; i++){
     doc.addPage()
     var imageToDisplay = expenses[i].image
     imageArray.push(imageToDisplay)
-    doc.text(name, 15, 8)
-    doc.addImage(imageArray[i], 'JPEG', 10, 10, 180, 190, [i])
+
+    doc.addImage(process.env.PUBLIC_URL + "TIE-logo.png", 'PNG', 15, 10, 24, 21, [i + "logo"])
+    doc.text(expenses[i].firstname + " " + expenses[i].secondname, 15, 50)
+    doc.text(expenses[i].paymentPeriod, 15, 57)
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(13)
+    doc.text("CHF " + expenses[i].amount, 15, 75)
+    doc.text(expenses[i].account, 15, 82)
+    doc.text(expenses[i].mwst + " MWST", 15, 89)
+    doc.text(expenses[i].numberOfKm + " KM", 15, 96)
+
+    doc.setFont("helvetica", "italic");
+    var adjustedText = doc.splitTextToSize(expenses[i].description, 85);
+    doc.text(adjustedText, 15, 110)
+    doc.addImage(imageArray[i], 'JPEG', 105, 10, 180, 190, [i])
+
+    doc.setFontSize(16)
+    doc.setFont("helvetica", "bold");
   }
 
   doc.save("SP-" + expenses[0].firstname + "-" + expenses[0].secondname + "-" + expenses[0].paymentPeriod + ".pdf");
@@ -298,7 +315,6 @@ function createPDF(test){
           </Grid>
           <Grid item xs={3}>
             <TextField
-              required
               id="outlined-required"
               label= "Firstname"
               className="InputField"
@@ -309,7 +325,6 @@ function createPDF(test){
           </Grid>
           <Grid item xs={9}>
             <TextField
-              required
               id="outlined-required"
               label="Secondname"
               className="InputField"
