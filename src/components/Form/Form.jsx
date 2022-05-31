@@ -47,9 +47,6 @@ import { jsPDF } from "jspdf";
 import 'jspdf-autotable'
 
 
-
-
-
 const Form = () => {
 
   //useReducer
@@ -59,7 +56,7 @@ const Form = () => {
   const [firstname, setFirstname] = useState("")
   const [secondname, setSecondname] = useState("")
   const [paymentPeriod, setPaymentPeriod] = useState("")
-  const [date, setDate] = useState(null)
+  const [date, setDate] = useState(new Date())
   const [account, setAccount] = useState("")
   const [amount, setAmount] = useState(0)
   const [description, setDescription] = useState("")
@@ -112,30 +109,33 @@ useEffect(() => {
   };
 
 //Reset Values
-
   const resetValues = () => {
     setPaymentPeriod("")
     setAccount("")
-    setAmount("")
+    setAmount(0)
     setDescription("")
     setImage("")
     setNumberOfKm(0)
-    setDate("")
+    setDate(new Date())
     setMwst("")
   }
 
   const resetValidation = () => {
+    setDateError(false)
     setAccountError(null)
+    setAmountError(null)
+    setDescriptionError(null)
+    setImageError(null)
+    setMwstError(null)
+    setNumberOfKmError(null)
   }
 
 //CheckPdfButton & Progressbar
-
 const checkPdfButton = () => {
   if (expenses.length >= 1){
     setCreatePdfButton(true)
   } else{
     setCreatePdfButton(false)
-    setProgress(66)
   }
 }
 
@@ -145,8 +145,8 @@ const checkPdfButton = () => {
 
   //Person Validation
   function handlePersonalDetailsError(){
-    firstname.length < 2 ? setFirstnameError(true) : setFirstnameError(false);
-    secondname.length < 2 ? setSecondnameError(true) : setSecondnameError(false);
+    firstname.length < 2 || firstname.length > 20 ? setFirstnameError(true) : setFirstnameError(false);
+    secondname.length < 2 || secondname.length > 20 ? setSecondnameError(true) : setSecondnameError(false);
     paymentPeriod === "" ? setPaymentPeriodError(true) : setPaymentPeriodError(false);
   }
 
@@ -163,24 +163,26 @@ const checkPdfButton = () => {
 
   //Receipt Validation
   function handleReceiptValidation(){
-    date === null ? setDateError(true) : setDateError(false)
+    date == "test" ? setDateError(true) : setDateError(false)
     account === "" ? setAccountError(true) : setAccountError(false)
-    amount == 0 ? setAmountError(true) : setAmountError(false)
+    amount == 0 || amount > 3000 ? setAmountError(true) : setAmountError(false)
     mwst === "" ? setMwstError(true) : setMwstError(false)
     image === "" ? setImageError(true) : setImageError(false)
-    description.length < 20 ? setDescriptionError(true) : setDescriptionError(false)
+    description.length < 10 || description.length > 500 ? setDescriptionError(true) : setDescriptionError(false)
   }
 
   function handleCarValidation(){
-    date === "" ? setDateError(true) : setDateError(false)
+    date === "test" ? setDateError(true) : setDateError(false)
     numberOfKm == 0 ? setNumberOfKmError(true) : setNumberOfKmError(false)
-    description.length < 20 ? setDescriptionError(true) : setDescriptionError(false)
+    description.length < 10 ? setDescriptionError(true) : setDescriptionError(false)
   }
 
   //Dialog
-    //open Dialog
+  //open Dialog
   const handleClickOpenReceipt = () => {
     setOpenReceipt(true)
+    console.log(dateError);
+    console.log(date);
   }
 
   const handleClickOpenCar = () => {
@@ -194,20 +196,16 @@ const checkPdfButton = () => {
   const handleCloseReceipt = () => {
     setOpenReceipt(false)
     resetValues()
+    resetValidation()
   }
 
   const handleCloseCar = () => {
     setOpenCar(false)
     resetValues()
+    resetValidation()
   }
 
-
-  //Add
-    //note sure if this is necessary
-  const handleAddReceipt = (event, reason) => {
-
-  };
-
+  //Add Receipt
   useEffect(() => {
     if (
       dateError === false &&
@@ -225,7 +223,7 @@ const checkPdfButton = () => {
     } else{}
   }, [receiptSwitch]);
 
-
+  //Add Car Travel
   useEffect(() => {
     if (
       dateError === false &&
@@ -237,29 +235,8 @@ const checkPdfButton = () => {
       addExpense(expense)
       resetValues()
       resetValidation()
-    } else{
-      console.log(dateError);
-      console.log(numberOfKmError);
-      console.log(descriptionError);
-      console.log(date);
-      console.log(account);
-      console.log(amount);
-      console.log(mwst);
-      console.log(image);
-      console.log(description);
-      console.log(numberOfKm);
-    }
+    } else{}
   }, [carSwitch]);
-
-
-
-
-
-
-  const handleAddCar = (event, reason) => {
-
-  };
-
 
 
  //jsPDF
@@ -288,7 +265,7 @@ function createPDF(test){
         rows.push(temp);
         total += expense.amount + (expense.numberOfKm * mileageCompensation)
     });
-  doc.setFontSize(18)
+  doc.setFontSize(13)
   doc.text(name, 15, 10)
   doc.text("Total: CHF " + total.toString(), 15, 20)
   doc.autoTable(col, rows, { startY: 30 });
@@ -303,7 +280,6 @@ function createPDF(test){
   }
 
   doc.save("SP-" + expenses[0].firstname + "-" + expenses[0].secondname + "-" + expenses[0].paymentPeriod + ".pdf");
-
 }
 
 
@@ -312,7 +288,6 @@ function createPDF(test){
 
   return (
   <React.Fragment>
-
     <Container fixed sx={{ mt: 5 }}>
       {formStatus ?
         (<div>
@@ -445,9 +420,8 @@ function createPDF(test){
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   label="Date"
-                  inputFormat="dd/MM/yyyy"
+                  inputFormat="dd.MM.yyyy"
                   maxDate= {new Date()}
-                  defaultDate={""}
                   value={date}
                   onChange={(newValue) => {
                     setDate(newValue);
@@ -543,7 +517,7 @@ function createPDF(test){
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
                 error={descriptionError}
-                helperText={descriptionError ? "min. 20 signs" : ""}
+                helperText={descriptionError ? "at least 10 characters" : ""}
                 />
             </Grid>
             </Grid>
@@ -551,7 +525,7 @@ function createPDF(test){
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseReceipt}>Cancel</Button>
-          <Button onClick={() => {handleAddReceipt(); handleReceiptValidation(); setReceiptSwitch(current => !current)}}>Add</Button>
+          <Button onClick={() => {handleReceiptValidation(); setReceiptSwitch(current => !current)}}>Add</Button>
         </DialogActions>
       </Dialog>
 
@@ -602,7 +576,7 @@ function createPDF(test){
               value={description}
               onChange={(event) => setDescription(event.target.value)}
               error={descriptionError}
-              helperText={descriptionError ? "min. 20 signs" : ""}
+              helperText={descriptionError ? "at least 10 characters" : ""}
               />
           </Grid>
           </Grid>
@@ -613,7 +587,7 @@ function createPDF(test){
         <Button onClick={() => {handleCarValidation(); setCarSwitch(current => !current);}}>Add</Button>
       </DialogActions>
     </Dialog>
-</Grid>
+  </Grid>
 
 
                  {expenses.map((data, index) =>
