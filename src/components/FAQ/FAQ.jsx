@@ -6,22 +6,31 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
 import "./FAQ.css"
 
 export default function FAQ() {
   return (
-    <Container className="faq">
+    <Container fixed sx={{ mt: 5 }}>
+    <Grid container spacing={5}>
+      <Grid item xs={12}>
+      <Typography>
+        <h1>FAQ</h1>
+      </Typography>
+    </Grid>
+
+    <Grid item xs={12}>
       <Accordion>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          <Typography>To whom Do I have to send the PDF to?</Typography>
+          <Typography>To whom do I have to send the PDF to?</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
-            Please send the PDF file directly to Robin Röösli (robin@tie-international.com).
+            Please send the PDF file directly to Robin Röösli (robin@tie-international.com or via Slack).
           </Typography>
         </AccordionDetails>
       </Accordion>
@@ -39,12 +48,17 @@ export default function FAQ() {
           </Typography>
         </AccordionDetails>
       </Accordion>
+    </Grid>
+
+    <Grid item xs={12}>
       <Button
         variant="contained"
         href="Form"
-        className={"button"}
         >Back to the App
       </Button>
+      </Grid>
+
+    </Grid>
     </Container>
   );
 }

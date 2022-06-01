@@ -8,6 +8,7 @@ import "./ExpenseCard.css"
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Typography from '@mui/material/Typography';
 
 const ExpenseCard = ({ date, account, amount, mwst, image, description, numberOfKm }) => {
   const { expenses, addExpense, removeExpense } = useTool();
@@ -30,7 +31,9 @@ return (
     <Grid item xs={3}>
       <div className="img-box">
         <img src={image} width={190} height={250} className="img"/>
-        <div className="preview">Preview</div>
+        <Typography>
+          <div className="preview">Preview</div>
+        </Typography>
       </div>
     </Grid>
 
@@ -38,23 +41,33 @@ return (
       <Grid container spacing={1}>
 
         <Grid item xs={12}>
-          <h5 className="date">{convertDate(date)}</h5>
+          <Typography>
+            <h5 className="date">{convertDate(date)}</h5>
+          </Typography>
         </Grid>
 
         <Grid item xs={3}>
-          <h3>CHF {Number(amount)}</h3>
+          <Typography>
+            <h3>CHF {Number(amount)}</h3>
+          </Typography>
         </Grid>
 
         <Grid item xs={9}>
-          <h3>{account}</h3>
+          <Typography>
+            <h3>{account}</h3>
+          </Typography>
         </Grid>
 
         <Grid item xs={12}>
-          <div className="description" style={{ wordBreak: "break-word" }}>{description}</div>
+          <Typography>
+            <div className="description" style={{ wordBreak: "break-word" }}>{description}</div>
+          </Typography>
         </Grid>
 
         <Grid item xs={12}>
-          {mwst == "0%" ? (<div></div>) : (<div className="chips">MWST: {mwst}</div>)}
+          <Typography>
+            {mwst == "0%" ? (<div></div>) : (<div className="chips">MWST: {mwst}</div>)}
+          </Typography>
         </Grid>
 
       </Grid>

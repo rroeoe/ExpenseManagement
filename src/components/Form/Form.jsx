@@ -34,6 +34,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import FormHelperText from '@mui/material/FormHelperText';
+import Typography from '@mui/material/Typography';
 
 //Icons
 import DirectionsCarFilledIcon from '@mui/icons-material/DirectionsCarFilled';
@@ -261,7 +262,7 @@ function createPDF(test){
   expenses.forEach(expense => {
         var temp = [convertDate(expense.date),expense.account,expense.description,expense.mwst,expense.numberOfKm, "CHF " + expense.amount];
         rows.push(temp);
-        total += expense.amount + (expense.numberOfKm * mileageCompensation)
+        total += expense.amount
     });
   doc.setFontSize(16)
   doc.setFont("helvetica", "bold");
@@ -389,11 +390,15 @@ function createPDF(test){
           <Grid item xs={12}>
           <div className="ChipsRow">
             <div className="Chips" onClick={handleClickOpenReceipt}>
-              <h3>Receipt</h3>
+              <Typography>
+                <h3>Receipt</h3>
+              </Typography>
               <ReceiptLongIcon sx={{ fontSize: "80px" }} />
             </div>
             <div className="Chips" onClick={handleClickOpenCar}>
-              <h3>Car Travel</h3>
+              <Typography>
+                <h3>Car Travel</h3>
+              </Typography>
               <DirectionsCarFilledIcon sx={{ fontSize: "80px" }} />
             </div>
           </div>
@@ -401,7 +406,9 @@ function createPDF(test){
 
 
             <Grid item xs={9.5} className="expense">
-              <h3 className={"totalValue"}>Expense Total: CHF {total}</h3>
+              <Typography>
+                <h3 className={"totalValue"}>Expense Total: CHF {total}</h3>
+              </Typography>
             </Grid>
 
 
@@ -508,6 +515,7 @@ function createPDF(test){
             </Grid>
 
             <Grid item xs={4}>
+            <Typography>
                 <input
                   id="file-input"
                   type="file"
@@ -517,6 +525,7 @@ function createPDF(test){
                   color="red"
                   className={imageError ? "FileAlert" : ""}
                 />
+              </Typography>
             </Grid>
 
             <Grid item xs={12}>
