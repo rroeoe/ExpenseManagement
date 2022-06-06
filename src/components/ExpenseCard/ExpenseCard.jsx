@@ -9,15 +9,31 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Typography from '@mui/material/Typography';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const ExpenseCard = ({ date, account, amount, mwst, image, description, numberOfKm }) => {
   const { expenses, addExpense, removeExpense } = useTool();
+  const [deleteOpen, setDeleteOpen] = useState(false)
 
-  const handleDelete = () => {
-    const expense = { date, account, amount, mwst, image, description, numberOfKm }
-    console.log(expense);
-    removeExpense(expense)
-  }
+
+  const handleClickOpen = () => {
+  setDeleteOpen(true);
+};
+
+const handleClose = () => {
+  setDeleteOpen(false);
+};
+
+const handleCloseDelete = () => {
+  setDeleteOpen(false);
+  const expense = { date, account, amount, mwst, image, description, numberOfKm }
+  removeExpense(expense)
+};
+
 
   function convertDate(str) {
   var date = new Date(str),
@@ -75,13 +91,32 @@ return (
     <Grid item xs={1}>
       <IconButton aria-label="delete" size="large">
         <DeleteIcon
-        onClick={handleDelete}
+        onClick={handleClickOpen}
         fontSize="inherit" />
       </IconButton>
     </Grid>
+    <Dialog
+        open={deleteOpen}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Confirm to delete this entry."}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleCloseDelete} autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
   </Grid>
-
-
 )
 }
 

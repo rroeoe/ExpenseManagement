@@ -71,6 +71,7 @@ const Form = () => {
   const referenceUploadedImage = React.useRef();
   const mileageCompensation = 0.75
 
+
   //Validation
   const [personalDetailsError, setPersonalDetailsError] = useState(false)
   const [receiptError, setReceiptError] = useState(false)
