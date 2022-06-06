@@ -54,6 +54,7 @@ const Form = () => {
   const {expenses, addExpense, removeExpense, updateTotal, total} = useTool()
 
   //Data labels
+  const [uniqueId, setUniqueId] = useState(1)
   const [firstname, setFirstname] = useState("")
   const [secondname, setSecondname] = useState("")
   const [paymentPeriod, setPaymentPeriod] = useState("")
@@ -119,6 +120,7 @@ useEffect(() => {
     setNumberOfKm(0)
     setDate(new Date())
     setMwst("")
+    setUniqueId(uniqueId + 1)
   }
 
   const resetValidation = () => {
@@ -217,7 +219,7 @@ const checkPdfButton = () => {
       descriptionError === false
     ){
       setOpenReceipt(false);
-      const expense = { firstname, secondname, paymentPeriod, date, account, amount, mwst, image, description, numberOfKm }
+      const expense = { uniqueId, firstname, secondname, paymentPeriod, date, account, amount, mwst, image, description, numberOfKm }
       addExpense(expense)
       resetValues()
       resetValidation()
@@ -232,7 +234,7 @@ const checkPdfButton = () => {
       descriptionError === false
     ){
       setOpenCar(false);
-      const expense = { firstname, secondname, paymentPeriod, date, account, amount, mwst, image, description, numberOfKm }
+      const expense = { uniqueId, firstname, secondname, paymentPeriod, date, account, amount, mwst, image, description, numberOfKm }
       addExpense(expense)
       resetValues()
       resetValidation()
@@ -297,7 +299,6 @@ function createPDF(test){
     doc.setFontSize(16)
     doc.setFont("helvetica", "bold");
   }
-
   doc.save("SP-" + expenses[0].firstname + "-" + expenses[0].secondname + "-" + expenses[0].paymentPeriod + ".pdf");
 }
 
@@ -408,7 +409,7 @@ function createPDF(test){
 
             <Grid item xs={9.5} className="expense">
               <Typography>
-                <h3 className={"totalValue"}>Expense Total: CHF {total}</h3>
+                <h3 className={"totalValue"}>Expense Total: CHF {total.toFixed(2).toLocaleString()}</h3>
               </Typography>
             </Grid>
 
@@ -490,7 +491,7 @@ function createPDF(test){
                 InputLabelProps={{
               shrink: true,
             }}
-                value={amount}
+                value={amount.toString()}
                 onChange={(event) => setAmount(Number(event.target.value))}
                 error={amountError}
               />
@@ -582,7 +583,7 @@ function createPDF(test){
               type="number"
               name="amount"
               className="InputField"
-              value={numberOfKm}
+              value={numberOfKm.toString()}
               onChange={(event) => {setNumberOfKm(Number(event.target.value)); setAmount(Number(event.target.value)*mileageCompensation)}}
               error={numberOfKmError}
             />

@@ -3,8 +3,7 @@ import ReactDOM from "react-dom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css"
 import Form from "./components/Form/Form"
-import FAQ from "./components/FAQ/FAQ"
-import LandingPage from "./components/LandingPage/LandingPage"
+import Faq from "./components/FAQ/FAQ"
 import ExpenseCard from "./components/ExpenseCard/ExpenseCard"
 import { ExpensesProvider } from "./context/ExpensesContext"
 import ResponsiveAppBar from "./layouts/Header"
@@ -33,9 +32,8 @@ function App(){
       <ResponsiveAppBar />
         <BrowserRouter>
             <Routes>
-              <Route path="/" element={<LandingPage />} />
               <Route path="Form" element={<Form />} />
-              <Route path="faq" element={<FAQ />} />
+              <Route path="faq" element={<Faq />} />
             </Routes>
         </BrowserRouter>
     </ExpensesProvider>

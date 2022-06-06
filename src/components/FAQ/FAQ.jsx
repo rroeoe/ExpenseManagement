@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import "./FAQ.css"
 
-export default function FAQ() {
+export default function Faq() {
   return (
     <Container fixed sx={{ mt: 5 }}>
     <Grid container spacing={5}>

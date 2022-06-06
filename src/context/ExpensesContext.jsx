@@ -20,7 +20,7 @@ export const ExpensesProvider = ({ children }) => {
  const removeExpense = (expense) => {
 
    const updatedExpenses = state.expenses.filter(
-      (currentExpense) => currentExpense.description !== expense.description
+      (currentExpense) => currentExpense.uniqueId != expense.uniqueId
     );
 
 

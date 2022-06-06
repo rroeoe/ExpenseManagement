@@ -15,7 +15,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-const ExpenseCard = ({ date, account, amount, mwst, image, description, numberOfKm }) => {
+const ExpenseCard = ({ uniqueId, date, account, amount, mwst, image, description, numberOfKm }) => {
   const { expenses, addExpense, removeExpense } = useTool();
   const [deleteOpen, setDeleteOpen] = useState(false)
 
@@ -30,7 +30,7 @@ const handleClose = () => {
 
 const handleCloseDelete = () => {
   setDeleteOpen(false);
-  const expense = { date, account, amount, mwst, image, description, numberOfKm }
+  const expense = { uniqueId, date, account, amount, mwst, image, description, numberOfKm }
   removeExpense(expense)
 };
 
@@ -64,7 +64,7 @@ return (
 
         <Grid item xs={3}>
           <Typography>
-            <h3>CHF {Number(amount)}</h3>
+            <h3>CHF {Number(amount).toFixed(2)}</h3>
           </Typography>
         </Grid>
 
