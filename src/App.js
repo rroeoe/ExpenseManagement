@@ -32,6 +32,7 @@ function App(){
       <ResponsiveAppBar />
         <BrowserRouter>
             <Routes>
+              <Route path="/" element={<Form />} />
               <Route path="Form" element={<Form />} />
               <Route path="faq" element={<Faq />} />
             </Routes>

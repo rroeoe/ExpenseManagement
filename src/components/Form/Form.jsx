@@ -68,7 +68,9 @@ const Form = () => {
   const [progress, setProgress] = useState(33)
   const [receiptSwitch, setReceiptSwitch] = useState(false)
   const [carSwitch, setCarSwitch] = useState(false)
+  const [dateFactor, setDateFactor] = useState(new Date().getDay())
   const currentYear = new Date().getFullYear()
+  const paymentPeriodArray = []
   const referenceUploadedImage = React.useRef();
   const mileageCompensation = 0.75
 
@@ -104,6 +106,46 @@ useEffect(() => {
   updateTotal(expenses)
   checkPdfButton()
 }, [expenses]);
+
+//Get Months
+
+for (let i = 0; i < 3; i++) {
+  let month = new Date().getMonth() + dateFactor + i;
+  let year = new Date().getFullYear();
+  if (month > 12) {
+    month = month - 12;
+    year = year + 1;
+  }
+  const nameMonth = {
+    1: "Januar",
+    2: "Februar",
+    3: "März",
+    4: "April",
+    5: "Mai",
+    6: "Juni",
+    7: "Juli",
+    8: "August",
+    9: "September",
+    10: "Oktober",
+    11: "November",
+    12: "Dezember",
+  };
+  paymentPeriodArray.push(nameMonth[month] + " " + year)
+}
+
+useEffect(() => {
+  if(new Date().getDate() <= 25){
+    setDateFactor(1)
+  } else {
+    setDateFactor(2)
+  };
+  console.log(dateFactor);
+}, [])
+
+
+useEffect(() => {
+  setPaymentPeriod(paymentPeriodArray[0])
+}, [paymentPeriodArray])
 
 //Upload Image
   const handleImageUpload = (e) => {
@@ -270,7 +312,7 @@ function createPDF(test){
   doc.setFontSize(16)
   doc.setFont("helvetica", "bold");
   doc.text(expenses[0].firstname + " " + expenses[0].secondname + "  -  " + expenses[0].paymentPeriod, 15, 45)
-  doc.text("Total: CHF " + total.toString(), 243, 45)
+  doc.text("Total: CHF " + total.toString(), 235, 45)
   doc.addImage(process.env.PUBLIC_URL + "TIE-logo.png", 'PNG', 15, 10, 24, 21, [i])
   doc.autoTable(col, rows, { startY: 55 });
 
@@ -324,6 +366,7 @@ function createPDF(test){
               value={firstname}
               onChange={(event) => setFirstname(event.target.value)}
               error={firstnameError}
+              inputProps={{ maxLength: 15 }}
             />
           </Grid>
           <Grid item xs={9}>
@@ -334,6 +377,7 @@ function createPDF(test){
               value={secondname}
               onChange={(event) => setSecondname(event.target.value)}
               error={secondnameError}
+              inputProps={{ maxLength: 15 }}
             />
           </Grid>
           <Grid item xs={12}>
@@ -350,18 +394,9 @@ function createPDF(test){
                   onChange={(event) => setPaymentPeriod(event.target.value)}
                   error={paymentPeriodError}
                 >
-                  <MenuItem value={"January " + currentYear}>January {currentYear}</MenuItem>
-                  <MenuItem value={"February " + currentYear}>February {currentYear}</MenuItem>
-                  <MenuItem value={"March " + currentYear}>March {currentYear}</MenuItem>
-                  <MenuItem value={"April " + currentYear}>April {currentYear}</MenuItem>
-                  <MenuItem value={"May " + currentYear}>May {currentYear}</MenuItem>
-                  <MenuItem value={"June " + currentYear}>June {currentYear}</MenuItem>
-                  <MenuItem value={"July " + currentYear}>July {currentYear}</MenuItem>
-                  <MenuItem value={"August " + currentYear}>August {currentYear}</MenuItem>
-                  <MenuItem value={"September " + currentYear}>September {currentYear}</MenuItem>
-                  <MenuItem value={"Oktober " + currentYear}>Oktober {currentYear}</MenuItem>
-                  <MenuItem value={"November " + currentYear}>November {currentYear}</MenuItem>
-                  <MenuItem value={"December " + currentYear}>December {currentYear}</MenuItem>
+                {paymentPeriodArray.map((i) =>
+                  <MenuItem value={i}>{i}</MenuItem>
+                )}
                 </Select>
               </FormControl>
             </Box>
@@ -540,6 +575,7 @@ function createPDF(test){
                 fullWidth
                 name="description"
                 className="InputField"
+                inputProps={{ maxLength: 300 }}
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
                 error={descriptionError}
@@ -599,6 +635,7 @@ function createPDF(test){
               fullWidth
               name="description"
               className="InputField"
+              inputProps={{ maxLength: 300 }}
               value={description}
               onChange={(event) => setDescription(event.target.value)}
               error={descriptionError}
@@ -614,8 +651,6 @@ function createPDF(test){
       </DialogActions>
     </Dialog>
   </Grid>
-
-
                  {expenses.map((data, index) =>
                    <Grid item xs={12}>
                      <ExpenseCard key={index} id={index} {...data}/>
