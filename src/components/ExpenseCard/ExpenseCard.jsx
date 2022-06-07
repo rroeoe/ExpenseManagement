@@ -102,7 +102,7 @@ return (
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {"Confirm to delete this entry."}
+          {"Do you want to delete this entry?"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">

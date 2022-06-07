@@ -53,7 +53,7 @@ export default function Faq() {
     <Grid item xs={12}>
       <Button
         variant="contained"
-        href="Form"
+        href="/"
         >Back to the App
       </Button>
       </Grid>
