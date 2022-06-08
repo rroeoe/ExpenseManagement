@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 
-//Local Files
+//Local files
 import ExpenseCard from "../ExpenseCard/ExpenseCard";
 import "./Form.css";
 import carImage from "../../assets/car.jpg";
