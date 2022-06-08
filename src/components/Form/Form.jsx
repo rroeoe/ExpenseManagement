@@ -104,7 +104,7 @@ const Form = () => {
     checkPdfButton();
   }, [expenses]);
 
-  //Get months
+  //Create payment periods list
   for (let i = 0; i < 3; i++) {
     let month = new Date().getMonth() + dateFactor + i;
     let year = new Date().getFullYear();
@@ -138,7 +138,7 @@ const Form = () => {
     console.log(dateFactor);
   }, []);
 
-  //set payment period
+  //Set payment period
   useEffect(() => {
     setPaymentPeriod(paymentPeriodArray[0]);
   }, [paymentPeriodArray]);
@@ -161,7 +161,7 @@ const Form = () => {
     setUniqueId(uniqueId + 1);
   };
 
-  //CheckPdfButton & Progressbar
+  //set "Create PDF" button
   const checkPdfButton = () => {
     if (expenses.length >= 1) {
       setCreatePdfButton(true);
@@ -229,89 +229,93 @@ const Form = () => {
   }
 
   //Dialog
-  //Open dialog
-  const handleClickOpenReceipt = () => {
-    setOpenReceipt(true);
-  };
+  //Receipt
+    //Open
+    const handleClickOpenReceipt = () => {
+      setOpenReceipt(true);
+    };
 
-  const handleClickOpenCar = () => {
-    setOpenCar(true);
-    setImage(process.env.PUBLIC_URL + "carIcon.jpg");
-    setAccount("5820 Reisespesen");
-    setMwst("0%");
-  };
-
-  //Cancel
-  const handleCloseReceipt = () => {
-    setOpenReceipt(false);
-    resetValues();
-    resetValidation();
-  };
-
-  const handleCloseCar = () => {
-    setOpenCar(false);
-    resetValues();
-    resetValidation();
-  };
-
-  //Add receipt
-  useEffect(() => {
-    if (
-      dateError === false &&
-      accountError === false &&
-      amountError === false &&
-      mwstError === false &&
-      imageError === false &&
-      descriptionError === false
-    ) {
+    //Cancel
+    const handleCloseReceipt = () => {
       setOpenReceipt(false);
-      const expense = {
-        uniqueId,
-        firstname,
-        secondname,
-        paymentPeriod,
-        date,
-        account,
-        amount,
-        mwst,
-        image,
-        description,
-        numberOfKm,
-      };
-      addExpense(expense);
       resetValues();
       resetValidation();
-    } else {
-    }
-  }, [receiptSwitch]);
+    };
 
-  //Add car travel
-  useEffect(() => {
-    if (
-      dateError === false &&
-      numberOfKmError === false &&
-      descriptionError === false
-    ) {
+    //Add
+    useEffect(() => {
+      if (
+        dateError === false &&
+        accountError === false &&
+        amountError === false &&
+        mwstError === false &&
+        imageError === false &&
+        descriptionError === false
+      ) {
+        setOpenReceipt(false);
+        const expense = {
+          uniqueId,
+          firstname,
+          secondname,
+          paymentPeriod,
+          date,
+          account,
+          amount,
+          mwst,
+          image,
+          description,
+          numberOfKm,
+        };
+        addExpense(expense);
+        resetValues();
+        resetValidation();
+      } else {
+      }
+    }, [receiptSwitch]);
+
+  //Car travel
+    //Open
+    const handleClickOpenCar = () => {
+      setOpenCar(true);
+      setImage(process.env.PUBLIC_URL + "carIcon.jpg");
+      setAccount("5820 Reisespesen");
+      setMwst("0%");
+    };
+
+    //Cancel
+    const handleCloseCar = () => {
       setOpenCar(false);
-      const expense = {
-        uniqueId,
-        firstname,
-        secondname,
-        paymentPeriod,
-        date,
-        account,
-        amount,
-        mwst,
-        image,
-        description,
-        numberOfKm,
-      };
-      addExpense(expense);
       resetValues();
       resetValidation();
-    } else {
-    }
-  }, [carSwitch]);
+    };
+
+    //Add
+    useEffect(() => {
+      if (
+        dateError === false &&
+        numberOfKmError === false &&
+        descriptionError === false
+      ) {
+        setOpenCar(false);
+        const expense = {
+          uniqueId,
+          firstname,
+          secondname,
+          paymentPeriod,
+          date,
+          account,
+          amount,
+          mwst,
+          image,
+          description,
+          numberOfKm,
+        };
+        addExpense(expense);
+        resetValues();
+        resetValidation();
+      } else {
+      }
+    }, [carSwitch]);
 
   //jsPDF
   //Doc specifications
