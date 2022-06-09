@@ -279,7 +279,7 @@ const Form = () => {
       setOpenCar(true);
       setImage(process.env.PUBLIC_URL + "carIcon.jpg");
       setAccount("5820 Reisespesen");
-      setMwst("0%");
+      setMwst("0.0%");
     };
 
     //Cancel
@@ -400,14 +400,15 @@ const Form = () => {
 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(13);
-      doc.text("CHF " + expenses[i].amount, 15, 75);
-      doc.text(expenses[i].account, 15, 82);
-      doc.text(expenses[i].mwst + " MWST", 15, 89);
-      doc.text(expenses[i].numberOfKm + " KM", 15, 96);
+      doc.text(convertDate(expenses[i].date), 15, 75);
+      doc.text("CHF " + expenses[i].amount, 15, 82);
+      doc.text(expenses[i].account, 15, 89);
+      doc.text(expenses[i].mwst + " MWST", 15, 96);
+      doc.text(expenses[i].numberOfKm + " KM", 15, 103);
 
       doc.setFont("helvetica", "italic");
       var adjustedText = doc.splitTextToSize(expenses[i].description, 85);
-      doc.text(adjustedText, 15, 110);
+      doc.text(adjustedText, 15, 120);
       doc.addImage(imageArray[i], "JPEG", 105, 10, 180, 190, [i]);
 
       doc.setFontSize(16);
@@ -644,6 +645,7 @@ const Form = () => {
                             value={mwst}
                             onChange={(event) => setMwst(event.target.value)}
                           >
+                            <MenuItem value={"0.0%"}>0.0%</MenuItem>
                             <MenuItem value={"2.5%"}>2.5%</MenuItem>
                             <MenuItem value={"3.7%"}>3.7%</MenuItem>
                             <MenuItem value={"7.7%"}>7.7%</MenuItem>
