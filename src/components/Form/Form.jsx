@@ -409,6 +409,10 @@ const Form = () => {
       doc.setFont("helvetica", "italic");
       var adjustedText = doc.splitTextToSize(expenses[i].description, 85);
       doc.text(adjustedText, 15, 120);
+      doc.setFont("helvetica", "normal");
+      doc.text("Visum:", 15, 143)
+      doc.addImage(process.env.PUBLIC_URL + "signature.png", "PNG", 15, 150, 35, 20)
+
       doc.addImage(imageArray[i], "JPEG", 105, 10, 180, 190, [i]);
 
       doc.setFontSize(16);
