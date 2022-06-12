@@ -48,6 +48,23 @@ export default function Faq() {
           </Typography>
         </AccordionDetails>
       </Accordion>
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel2a-content"
+          id="panel2a-header"
+        >
+          <Typography>What exactly do the accounts include?</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography>
+            5820 Reisespesen: Reise zu Kunden, externe Events, externer Einsatz
+            5821 Verpflegungsspesen: Externe Verpflegung (bei Kunden, Reisen etc.)
+            5822 Übernachtungsspesen: Übernachtungen im Hotel, Airbnb etc.
+            5880 Personalanlässe: Bei internen Events (dazu zählt auch Anreise)
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
     </Grid>
 
     <Grid item xs={12}>

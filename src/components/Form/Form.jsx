@@ -35,6 +35,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import FormHelperText from "@mui/material/FormHelperText";
 import Typography from "@mui/material/Typography";
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
 
 //Icons
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
@@ -46,6 +49,9 @@ import AddIcon from "@mui/icons-material/Add";
 //jsPDF
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+
+//Tooltip
+const helpText = "More information (e.g., accounts, missing receipt) can be found in the FAQ."
 
 const Form = () => {
   //useReducer
@@ -556,7 +562,12 @@ const Form = () => {
                 maxWidth="lg"
                 fullWidth={true}
               >
-                <DialogTitle>Add your receipt expense</DialogTitle>
+                <DialogTitle>Add your receipt expense
+                <Tooltip title={helpText}>
+                  <IconButton>
+                    <HelpOutlineIcon />
+                  </IconButton>
+                </Tooltip></DialogTitle>
                 <DialogContent>
                   <Box
                     component="form"
@@ -714,7 +725,12 @@ const Form = () => {
                 maxWidth="lg"
                 fullWidth={true}
               >
-                <DialogTitle>Add your car travel</DialogTitle>
+                <DialogTitle>Add your car travel
+                <Tooltip title={helpText}>
+                  <IconButton>
+                    <HelpOutlineIcon />
+                  </IconButton>
+                </Tooltip></DialogTitle>
                 <DialogContent>
                   <Box
                     component="form"
