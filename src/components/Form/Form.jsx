@@ -1,50 +1,41 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 //Local files
 import ExpenseCard from "../ExpenseCard/ExpenseCard";
 import "./Form.css";
-import carImage from "../../assets/car.jpg";
 
 //Context
 import useTool from "../../context/ExpensesContext";
 
 //MUI
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import TextField from "@mui/material/TextField";
-import LinearProgress from "@mui/material/LinearProgress";
 import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import HelpIcon from "@mui/icons-material/Help";
-import Grid from "@mui/material/Grid";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import InputAdornment from "@mui/material/InputAdornment";
-import Fab from "@mui/material/Fab";
+import Container from "@mui/material/Container";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import FormHelperText from "@mui/material/FormHelperText";
-import Typography from "@mui/material/Typography";
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import Tooltip from '@mui/material/Tooltip';
+import FormControl from "@mui/material/FormControl";
+import Grid from "@mui/material/Grid";
 import IconButton from '@mui/material/IconButton';
+import InputAdornment from "@mui/material/InputAdornment";
+import InputLabel from "@mui/material/InputLabel";
+import LinearProgress from "@mui/material/LinearProgress";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Tooltip from '@mui/material/Tooltip';
+import Typography from "@mui/material/Typography";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 //Icons
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import SendIcon from "@mui/icons-material/Send";
-import PersonIcon from "@mui/icons-material/Person";
-import AddIcon from "@mui/icons-material/Add";
 
 //jsPDF
 import { jsPDF } from "jspdf";
@@ -76,7 +67,7 @@ const Form = () => {
   const currentYear = new Date().getFullYear();
   const paymentPeriodArray = [];
   const referenceUploadedImage = React.useRef();
-  const mileageCompensation = 0.75;
+  const mileageCompensation = 0.7;
 
   //Validation
   const [personalDetailsError, setPersonalDetailsError] = useState(false);
@@ -358,7 +349,7 @@ const Form = () => {
         expense.description,
         expense.mwst,
         expense.numberOfKm,
-        "CHF " + expense.amount,
+        "CHF " + expense.amount.toFixed(2),
       ];
       rows.push(temp);
       total += expense.amount;
@@ -374,7 +365,7 @@ const Form = () => {
       15,
       45
     );
-    doc.text("Total: CHF " + total.toString(), 235, 45);
+    doc.text("Total: CHF " + total.toFixed(2), 235, 45);
     doc.addImage(
       process.env.PUBLIC_URL + "TIE-logo.png",
       "PNG",
@@ -407,7 +398,7 @@ const Form = () => {
       doc.setFont("helvetica", "normal");
       doc.setFontSize(13);
       doc.text(convertDate(expenses[i].date), 15, 75);
-      doc.text("CHF " + expenses[i].amount, 15, 82);
+      doc.text("CHF " + expenses[i].amount.toFixed(2), 15, 82);
       doc.text(expenses[i].account, 15, 89);
       doc.text(expenses[i].mwst + " MWST", 15, 96);
       doc.text(expenses[i].numberOfKm + " KM", 15, 103);

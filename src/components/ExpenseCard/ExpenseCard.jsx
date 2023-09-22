@@ -1,19 +1,16 @@
-import React, { useState, useEffect, createContext, useContext } from "react";
-import ResponsiveAppBar from "../../layouts/Header";
-import StickyFooter from "../../layouts/Footer";
-import useTool from "../../context/ExpensesContext";
-import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
-import "./ExpenseCard.css";
-import IconButton from "@mui/material/IconButton";
-import Stack from "@mui/material/Stack";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import React, { useState } from "react";
+import useTool from "../../context/ExpensesContext";
+import "./ExpenseCard.css";
 
 const ExpenseCard = ({
   uniqueId,
