@@ -55,7 +55,7 @@ const Form = () => {
   const [paymentPeriod, setPaymentPeriod] = useState("");
   const [date, setDate] = useState(new Date());
   const [account, setAccount] = useState("");
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
   const [numberOfKm, setNumberOfKm] = useState(0);
@@ -407,8 +407,8 @@ const Form = () => {
       var adjustedText = doc.splitTextToSize(expenses[i].description, 85);
       doc.text(adjustedText, 15, 120);
       doc.setFont("helvetica", "normal");
-      doc.text("Visum:", 15, 143)
-      doc.addImage(process.env.PUBLIC_URL + "signature.png", "PNG", 15, 150, 35, 20)
+      // doc.text("Visum:", 15, 143)
+      // doc.addImage(process.env.PUBLIC_URL + "signature.png", "PNG", 15, 150, 35, 20)
 
       doc.addImage(imageArray[i], "JPEG", 105, 10, 180, 190, [i]);
 
