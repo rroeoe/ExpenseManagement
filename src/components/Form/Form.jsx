@@ -652,9 +652,9 @@ const Form = () => {
                             onChange={(event) => setMwst(event.target.value)}
                           >
                             <MenuItem value={"0.0%"}>0.0%</MenuItem>
-                            <MenuItem value={"2.5%"}>2.5%</MenuItem>
-                            <MenuItem value={"3.7%"}>3.7%</MenuItem>
-                            <MenuItem value={"7.7%"}>7.7%</MenuItem>
+                            <MenuItem value={"2.6%"}>2.6%</MenuItem>
+                            <MenuItem value={"3.8%"}>3.8%</MenuItem>
+                            <MenuItem value={"8.1%"}>8.1%</MenuItem>
                           </Select>
                         </FormControl>
                       </Grid>
